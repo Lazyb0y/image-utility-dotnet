@@ -69,8 +69,8 @@ namespace ImageUtility.Shell.ViewModel
             SourceImagesFiles = new ObservableCollection<string>();
             CompressQuality = 80;
 
-            SelectSourceFolderCommand = new RelayCommand(param => SelectSourceFolderCommandAction());
-            ConvertCommand = new RelayCommand(param => ConvertCommandActionAsync());
+            SelectSourceFolderCommand = new RelayCommand(param => SelectSourceFolderCommandAction(), param => !IsBusy);
+            ConvertCommand = new RelayCommand(param => ConvertCommandActionAsync(), param => !IsBusy);
         }
 
         #endregion
