@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using ImageUtility.Shell.Helpers;
@@ -69,7 +70,7 @@ namespace ImageUtility.Shell.ViewModel
             CompressQuality = 80;
 
             SelectSourceFolderCommand = new RelayCommand(param => SelectSourceFolderCommandAction());
-            ConvertCommand = new RelayCommand(param => ConvertCommandAction());
+            ConvertCommand = new RelayCommand(param => ConvertCommandActionAsync());
         }
 
         #endregion
@@ -82,9 +83,9 @@ namespace ImageUtility.Shell.ViewModel
             LoadImageFiles();
         }
 
-        private void ConvertCommandAction()
+        private async void ConvertCommandActionAsync()
         {
-            ConvertImages();
+            await ConvertImagesAsync();
         }
 
         #endregion
@@ -142,7 +143,7 @@ namespace ImageUtility.Shell.ViewModel
             return true;
         }
 
-        private void ConvertImages()
+        private async Task ConvertImagesAsync()
         {
             if (!ValidateSourceDirectory())
             {
