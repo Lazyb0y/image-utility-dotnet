@@ -4,9 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageUtility.Shell"
+        xmlns:converters="clr-namespace:ImageUtility.Shell.Converters"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="Image Utility" Height="400" Width="800">
+        Title="Image Utility" Height="450" Width="800">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <!-- Converters -->
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -35,11 +44,50 @@
             <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,10,0" Text="{Binding SourceFolder}" IsReadOnly="True" IsReadOnlyCaretVisible="True"/>
             <Button Grid.Row="0" Grid.Column="2" Content="Browse" Command="{Binding SelectSourceFolderCommand}"/>
 
-            <!-- Compress Quality -->
-            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,10,0,0">
-                <TextBlock Text="Compress Quality" Margin="0,0,10,0"/>
-                <Slider Name="CompressQualitySlider" Minimum="0" Maximum="100"  TickFrequency="10" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Value="{Binding CompressQuality}" Width="200" />
-                <TextBlock Text="{Binding ElementName=CompressQualitySlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right" Width="30" />
+            <!-- Image Settings -->
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10,0,0" IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Max Width:" />
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,5,5" Text="{Binding MaxWidth}" />
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="(in px)" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Max Height:" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,5,5" Text="{Binding MaxHeight}" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="(in px)" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Text="Set to 0 (zero) to prevent resizing in that dimension" FontWeight="Light" />
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <TextBlock Text="Compress Quality" Margin="0,0,10,0" />
+                        <Slider Name="CompressQualitySlider" Minimum="0" Maximum="100" TickFrequency="10" TickPlacement="BottomRight" IsSnapToTickEnabled="True" Value="{Binding CompressQuality}" Width="200" />
+                        <TextBlock Text="{Binding ElementName=CompressQualitySlider, Path=Value, UpdateSourceTrigger=PropertyChanged}" TextAlignment="Right" Width="30" />
+                    </StackPanel>
+                </Grid>
             </StackPanel>
 
             <!-- File List -->

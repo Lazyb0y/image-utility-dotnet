@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -39,6 +40,28 @@ namespace ImageUtility.Shell.ViewModel
             set
             {
                 _sourceFolder = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _maxWidth;
+        public int MaxWidth
+        {
+            get => _maxWidth;
+            set
+            {
+                _maxWidth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private int _maxHeight;
+        public int MaxHeight
+        {
+            get => _maxHeight;
+            set
+            {
+                _maxHeight = value;
                 OnPropertyChanged();
             }
         }
@@ -173,7 +196,23 @@ namespace ImageUtility.Shell.ViewModel
                 foreach (var sourceImagesFile in SourceImagesFiles)
                 {
                     var fileName = Path.GetFileName(sourceImagesFile);
-                    ImageHelpers.CompressImage(sourceImagesFile, Path.Combine(targetDirectory, fileName), CompressQuality);
+                    using (var bmp = new Bitmap(sourceImagesFile))
+                    {
+                        if (MaxWidth == 0 && MaxHeight == 0)
+                        {
+                            ImageHelpers.CompressImage(bmp, Path.Combine(targetDirectory, fileName), CompressQuality);
+                        }
+                        else
+                        {
+                            var maxWidth = MaxWidth != 0 ? MaxWidth : bmp.Width;
+                            var maxHeight = MaxHeight != 0 ? MaxHeight : bmp.Height;
+
+                            using (var resizedBmp = ImageHelpers.ResizeImageKeepingAspectRatio(bmp, maxWidth, maxHeight))
+                            {
+                                ImageHelpers.CompressImage(resizedBmp, Path.Combine(targetDirectory, fileName), CompressQuality);
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception x)
