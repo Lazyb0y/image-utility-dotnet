@@ -10,13 +10,18 @@ namespace ImageUtility.Shell.Helpers
         {
             using (var bmp = new Bitmap(sourcePath))
             {
-                var jpgEncoder = GetEncoder(ImageFormat.Jpeg);
-                var myEncoderParameters = new EncoderParameters(1);
-                var myEncoderParameter = new EncoderParameter(Encoder.Quality, quality);
-
-                myEncoderParameters.Param[0] = myEncoderParameter;
-                bmp.Save(destPath, jpgEncoder, myEncoderParameters);
+                CompressImage(bmp, destPath, quality);
             }
+        }
+
+        public static void CompressImage(Bitmap bmp, string destPath, int quality)
+        {
+            var jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+            var myEncoderParameters = new EncoderParameters(1);
+            var myEncoderParameter = new EncoderParameter(Encoder.Quality, quality);
+
+            myEncoderParameters.Param[0] = myEncoderParameter;
+            bmp.Save(destPath, jpgEncoder, myEncoderParameters);
         }
 
         private static ImageCodecInfo GetEncoder(ImageFormat format)
