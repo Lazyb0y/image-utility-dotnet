@@ -209,9 +209,10 @@ namespace ImageUtility.Shell.ViewModel
                 {
                     using (var bmp = new Bitmap(sourceImagesFile.FileInfo.FullName))
                     {
+                        var targetFileName = Path.Combine(targetDirectory, sourceImagesFile.FileInfo.Name);
                         if (MaxWidth == 0 && MaxHeight == 0)
                         {
-                            ImageHelpers.CompressImage(bmp, Path.Combine(targetDirectory, sourceImagesFile.FileInfo.Name), CompressQuality);
+                            ImageHelpers.CompressImage(bmp, targetFileName, CompressQuality);
                         }
                         else
                         {
@@ -220,9 +221,12 @@ namespace ImageUtility.Shell.ViewModel
 
                             using (var resizedBmp = ImageHelpers.ResizeImageKeepingAspectRatio(bmp, maxWidth, maxHeight))
                             {
-                                ImageHelpers.CompressImage(resizedBmp, Path.Combine(targetDirectory, sourceImagesFile.FileInfo.Name), CompressQuality);
+                                ImageHelpers.CompressImage(resizedBmp, targetFileName, CompressQuality);
                             }
                         }
+
+                        sourceImagesFile.OutputFileInfo = new FileInfo(targetFileName);
+                        sourceImagesFile.OutputFileDimension = ImageHelpers.GetImageDimension(targetFileName);
                     }
                 }
             }

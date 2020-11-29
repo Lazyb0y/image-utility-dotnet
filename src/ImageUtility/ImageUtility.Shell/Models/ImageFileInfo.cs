@@ -30,6 +30,28 @@ namespace ImageUtility.Shell.Models
             }
         }
 
+        private FileInfo _outputFileInfo;
+        public FileInfo OutputFileInfo
+        {
+            get => _outputFileInfo;
+            set
+            {
+                _outputFileInfo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Size? _outputFileDimension;
+        public Size? OutputFileDimension
+        {
+            get => _outputFileDimension;
+            set
+            {
+                _outputFileDimension = value;
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
     }
 }
