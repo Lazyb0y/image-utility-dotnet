@@ -1,12 +1,23 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Windows.Media.Imaging;
 
 namespace ImageUtility.Shell.Helpers
 {
     public static class ImageHelpers
     {
+        public static Size GetImageDimension(string imageFilePath)
+        {
+            using (var imageStream = File.OpenRead(imageFilePath))
+            {
+                var decoder = BitmapDecoder.Create(imageStream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.Default);
+                return new Size(decoder.Frames[0].PixelWidth, decoder.Frames[0].PixelHeight);
+            }
+        }
+
         public static Bitmap ResizeImageKeepingAspectRatio(Bitmap bmp, int maxWidth, int maxHeight)
         {
             var ratioX = (double) maxWidth / bmp.Width;

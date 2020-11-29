@@ -57,9 +57,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BytesToHumanReadableSizeConverter.cs" />
+    <Compile Include="Converters\FilePathToNameConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Helpers\DirectoryHelper.cs" />
     <Compile Include="Helpers\ImageHelpers.cs" />
+    <Compile Include="Models\ImageFileInfo.cs" />
     <Compile Include="MVVM\Observable.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />

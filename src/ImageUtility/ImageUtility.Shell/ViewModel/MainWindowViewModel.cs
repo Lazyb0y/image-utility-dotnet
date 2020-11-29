@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using ImageUtility.Shell.Helpers;
+using ImageUtility.Shell.Models;
 using ImageUtility.Shell.MVVM;
 
 namespace ImageUtility.Shell.ViewModel
@@ -22,8 +23,8 @@ namespace ImageUtility.Shell.ViewModel
 
         #region Property(s)
 
-        private ObservableCollection<string> _sourceImagesFiles;
-        public ObservableCollection<string> SourceImagesFiles
+        private ObservableCollection<ImageFileInfo> _sourceImagesFiles;
+        public ObservableCollection<ImageFileInfo> SourceImagesFiles
         {
             get => _sourceImagesFiles;
             set
@@ -89,7 +90,7 @@ namespace ImageUtility.Shell.ViewModel
 
         public MainWindowViewModel()
         {
-            SourceImagesFiles = new ObservableCollection<string>();
+            SourceImagesFiles = new ObservableCollection<ImageFileInfo>();
             CompressQuality = 80;
 
             SelectSourceFolderCommand = new RelayCommand(param => SelectSourceFolderCommandAction(), param => !IsBusy);
@@ -102,8 +103,15 @@ namespace ImageUtility.Shell.ViewModel
 
         private void SelectSourceFolderCommandAction()
         {
-            SelectSourceFolder();
-            LoadImageFiles();
+            try
+            {
+                SelectSourceFolder();
+                LoadImageFiles();
+            }
+            catch (Exception x)
+            {
+                MessageBox.Show(@"Unable to read all image files." + Environment.NewLine + x.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async void ConvertCommandActionAsync()
@@ -132,9 +140,13 @@ namespace ImageUtility.Shell.ViewModel
         private void LoadImageFiles()
         {
             SourceImagesFiles.Clear();
-            foreach (var filePath in DirectoryHelper.GetFilesOfExtension(SourceFolder, Filters, false))
+            foreach (var fileInfo in DirectoryHelper.GetFilesOfExtension(SourceFolder, Filters, false))
             {
-                SourceImagesFiles.Add(filePath);
+                SourceImagesFiles.Add(new ImageFileInfo
+                {
+                    FileInfo = fileInfo,
+                    Dimension = ImageHelpers.GetImageDimension(fileInfo.FullName)
+                });
             }
         }
 
@@ -195,12 +207,11 @@ namespace ImageUtility.Shell.ViewModel
             {
                 foreach (var sourceImagesFile in SourceImagesFiles)
                 {
-                    var fileName = Path.GetFileName(sourceImagesFile);
-                    using (var bmp = new Bitmap(sourceImagesFile))
+                    using (var bmp = new Bitmap(sourceImagesFile.FileInfo.FullName))
                     {
                         if (MaxWidth == 0 && MaxHeight == 0)
                         {
-                            ImageHelpers.CompressImage(bmp, Path.Combine(targetDirectory, fileName), CompressQuality);
+                            ImageHelpers.CompressImage(bmp, Path.Combine(targetDirectory, sourceImagesFile.FileInfo.Name), CompressQuality);
                         }
                         else
                         {
@@ -209,7 +220,7 @@ namespace ImageUtility.Shell.ViewModel
 
                             using (var resizedBmp = ImageHelpers.ResizeImageKeepingAspectRatio(bmp, maxWidth, maxHeight))
                             {
-                                ImageHelpers.CompressImage(resizedBmp, Path.Combine(targetDirectory, fileName), CompressQuality);
+                                ImageHelpers.CompressImage(resizedBmp, Path.Combine(targetDirectory, sourceImagesFile.FileInfo.Name), CompressQuality);
                             }
                         }
                     }

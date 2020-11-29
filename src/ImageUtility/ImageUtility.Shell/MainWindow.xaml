@@ -12,6 +12,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <!-- Converters -->
+            <converters:BytesToHumanReadableSizeConverter x:Key="BytesToHumanReadableSizeConverter" />
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         </ResourceDictionary>
     </Window.Resources>
@@ -91,8 +92,37 @@
             </StackPanel>
 
             <!-- File List -->
-            <ListView Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10" Height="250" ItemsSource="{Binding SourceImagesFiles}"
-                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False" />
+            <ListView Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10" Height="250" ItemsSource="{Binding SourceImagesFiles}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False">
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="File Path" Width="300">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Text="{Binding FileInfo.Name}"
+                                        TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="Width, Height" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Dimension}" TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
+                        <GridViewColumn Header="File Size" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding FileInfo.Length, Converter={StaticResource BytesToHumanReadableSizeConverter}}" TextTrimming="CharacterEllipsis" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
             <!-- Bottom Action Bar -->
             <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Content="Convert" Command="{Binding ConvertCommand}"/>
